@@ -10,8 +10,7 @@ using System.Text.Json;
 using System.Diagnostics;
 using System.Xml;
 using System.IO;
-
-
+using TrybeHotel.Dto;
 
 public class IntegrationTest: IClassFixture<WebApplicationFactory<Program>>
 {
@@ -75,6 +74,21 @@ public class IntegrationTest: IClassFixture<WebApplicationFactory<Program>>
         Assert.Equal(System.Net.HttpStatusCode.OK, response?.StatusCode);
     }
 
+    [Trait("Category", "Meus testes")]
+    [Theory(DisplayName = "Testando a rota Post /city")]
+    [InlineData("/city")]
+
+    public async Task TestPostCity(string url)
+    {
+        var inputObj = new {
+            Name = "Rio de Janeiro"
+        };
+
+        var response = await _clientTest.PostAsync(url, new StringContent(JsonConvert.SerializeObject(inputObj), System.Text.Encoding.UTF8, "application/json"));
+        Assert.Equal(System.Net.HttpStatusCode.Created, response.StatusCode);
+    }
+
+
     [Trait("Category", "Meus Testes")]
     [Theory(DisplayName = "Teste Rota /hotel")]
     [InlineData("/hotel")]
@@ -83,5 +97,59 @@ public class IntegrationTest: IClassFixture<WebApplicationFactory<Program>>
     {
         var response = await _clientTest.GetAsync(url);
         Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Trait("Category", "Meus Testes")]
+    [Theory(DisplayName = "Teste Rota POST /hotel")]
+    [InlineData("/hotel")]
+
+    public async Task TestPostHotel(string url)
+    {
+        var inputObj = new {
+            Name = "Trybe Hotel RJ",
+            Address = "Avenida Atlântica, 1400",
+            CityId = 2
+        };
+
+        var response = await _clientTest.PostAsync(url, new StringContent(JsonConvert.SerializeObject(inputObj), System.Text.Encoding.UTF8, "application/json"));
+
+        Assert.Equal(System.Net.HttpStatusCode.Created, response.StatusCode);
+    }
+
+    [Trait("Category", "Meus Testes")]
+    [Theory(DisplayName = "Teste Rota /room/:hotelId")]
+    [InlineData("/room/1")]
+
+    public async Task TestGetRoomId(string url)
+    {
+        var response = await _clientTest.GetAsync(url);
+        Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Trait("Category", "Meus Testes")]
+    [Theory(DisplayName = "Teste Rota POST /room")]
+    [InlineData("/room")]
+
+    public async Task TestGPOSTRoom(string url)
+    {
+        var inputObj = new {
+            Name = "Suite básica",
+            Capacity = 2,
+            Image = "image suite",
+            HotelId = 1
+        };
+
+        var response = await _clientTest.PostAsync(url, new StringContent(JsonConvert.SerializeObject(inputObj), System.Text.Encoding.UTF8, "application/json"));
+        Assert.Equal(System.Net.HttpStatusCode.Created, response.StatusCode);
+    }
+
+    [Trait("Category", "Meus Testes")]
+    [Theory(DisplayName = "Teste Rota DELETE /room/roomid")]
+    [InlineData("/room/1")]
+
+    public async Task TestGDELETERoomID(string url)
+    {
+        var response = await _clientTest.DeleteAsync(url);
+        Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
     }
 }
