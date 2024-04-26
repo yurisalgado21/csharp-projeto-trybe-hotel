@@ -17,7 +17,15 @@ namespace TrybeHotel.Controllers
         // 6. Desenvolva o endpoint GET /room/:hotelId
         [HttpGet("{HotelId}")]
         public IActionResult GetRoom(int HotelId){
-            throw new NotImplementedException();
+            try
+            {
+                return Ok(_repository.GetRooms(HotelId));
+            }
+            catch (Exception err)
+            {
+                
+                throw new Exception(err.Message);
+            }
         }
 
         // 7. Desenvolva o endpoint POST /room
