@@ -15,9 +15,9 @@ using System.IO;
 
 public class IntegrationTest: IClassFixture<WebApplicationFactory<Program>>
 {
-     public HttpClient _clientTest;
+    public HttpClient _clientTest;
 
-     public IntegrationTest(WebApplicationFactory<Program> factory)
+    public IntegrationTest(WebApplicationFactory<Program> factory)
     {
         //_factory = factory;
         _clientTest = factory.WithWebHostBuilder(builder => {
@@ -75,4 +75,13 @@ public class IntegrationTest: IClassFixture<WebApplicationFactory<Program>>
         Assert.Equal(System.Net.HttpStatusCode.OK, response?.StatusCode);
     }
 
+    [Trait("Category", "Meus Testes")]
+    [Theory(DisplayName = "Teste Rota /hotel")]
+    [InlineData("/hotel")]
+
+    public async Task TestGetHotel(string url)
+    {
+        var response = await _clientTest.GetAsync(url);
+        Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+    }
 }
