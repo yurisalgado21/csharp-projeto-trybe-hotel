@@ -19,6 +19,11 @@ namespace TrybeHotel.Controllers
         public IActionResult GetRoom(int HotelId){
             try
             {
+                if (HotelId.GetType() != typeof(int))
+                    return BadRequest("HotelId must be an integer");
+                else if (HotelId < 0)
+                    return BadRequest("HotelId must be a positive integer");
+                
                 return Ok(_repository.GetRooms(HotelId));
             }
             catch (Exception err)
@@ -47,6 +52,11 @@ namespace TrybeHotel.Controllers
         [HttpDelete("{RoomId}")]
         public IActionResult Delete(int RoomId)
         {
+            if (RoomId.GetType() != typeof(int))
+                return BadRequest("RoomId must be an integer");
+            else if (RoomId < 0)
+                return BadRequest("RoomId must be a positive integer");
+
             try
             {
                 _repository.DeleteRoom(RoomId);

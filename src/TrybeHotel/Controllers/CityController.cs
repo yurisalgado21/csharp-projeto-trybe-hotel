@@ -23,8 +23,14 @@ namespace TrybeHotel.Controllers
         // 3. Desenvolva o endpoint POST /city
         [HttpPost]
         public IActionResult PostCity([FromBody] City city){
+            
             try
             {
+                if (city.Name == "" || city.Name == null)
+                {
+                    return BadRequest("City name is required");
+                }
+
                 var newCity = _repository.AddCity(city);
                 return Created("", newCity);
             }

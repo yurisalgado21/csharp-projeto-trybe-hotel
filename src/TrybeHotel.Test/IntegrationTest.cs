@@ -12,6 +12,11 @@ using System.Xml;
 using System.IO;
 using TrybeHotel.Dto;
 
+public class CityJson {
+        public int CityId { get; set; }
+        public string? Name { get; set; }
+}
+
 public class IntegrationTest: IClassFixture<WebApplicationFactory<Program>>
 {
     public HttpClient _clientTest;
@@ -88,6 +93,21 @@ public class IntegrationTest: IClassFixture<WebApplicationFactory<Program>>
         Assert.Equal(System.Net.HttpStatusCode.Created, response.StatusCode);
     }
 
+    [Trait("Category", "Meus testes")]
+    [Theory(DisplayName = "Testando a rota Post /city, se o city.Name é null")]
+    [InlineData("/city")]
+
+    public async Task TestPostCityException(string url)
+    {
+        var inputObj = new {
+            Name = ""
+        };
+
+        var response = await _clientTest.PostAsync(url, new StringContent(JsonConvert.SerializeObject(inputObj), System.Text.Encoding.UTF8, "application/json"));
+        Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+
 
     [Trait("Category", "Meus Testes")]
     [Theory(DisplayName = "Teste Rota /hotel")]
@@ -117,6 +137,23 @@ public class IntegrationTest: IClassFixture<WebApplicationFactory<Program>>
     }
 
     [Trait("Category", "Meus Testes")]
+    [Theory(DisplayName = "Teste Rota POST /hotel EXCEPTION")]
+    [InlineData("/hotel")]
+
+    public async Task TestPostHotelException(string url)
+    {
+        var inputObj = new {
+            Name = "",
+            Address = "Avenida Atlântica, 1400",
+            CityId = 2
+        };
+
+        var response = await _clientTest.PostAsync(url, new StringContent(JsonConvert.SerializeObject(inputObj), System.Text.Encoding.UTF8, "application/json"));
+
+        Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Trait("Category", "Meus Testes")]
     [Theory(DisplayName = "Teste Rota /room/:hotelId")]
     [InlineData("/room/1")]
 
@@ -124,6 +161,26 @@ public class IntegrationTest: IClassFixture<WebApplicationFactory<Program>>
     {
         var response = await _clientTest.GetAsync(url);
         Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Trait("Category", "Meus Testes")]
+    [Theory(DisplayName = "Teste Rota /room/:hotelId EXCEPTION")]
+    [InlineData("/room/ABC")]
+
+    public async Task TestGetRoomIdEXCEPTION(string url)
+    {
+        var response = await _clientTest.GetAsync(url);
+        Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Trait("Category", "Meus Testes")]
+    [Theory(DisplayName = "Teste Rota /room/:hotelId EXCEPTION Negative")]
+    [InlineData("/room/-1")]
+
+    public async Task TestGetRoomIdEXCEPTIONegative(string url)
+    {
+        var response = await _clientTest.GetAsync(url);
+        Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     [Trait("Category", "Meus Testes")]
@@ -151,5 +208,25 @@ public class IntegrationTest: IClassFixture<WebApplicationFactory<Program>>
     {
         var response = await _clientTest.DeleteAsync(url);
         Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
+    }
+
+    [Trait("Category", "Meus Testes")]
+    [Theory(DisplayName = "Teste Rota DELETE /room/roomid EXCEPTION")]
+    [InlineData("/room/ABC")]
+
+    public async Task TestGDELETERoomIDEXCEPTION(string url)
+    {
+        var response = await _clientTest.DeleteAsync(url);
+        Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Trait("Category", "Meus Testes")]
+    [Theory(DisplayName = "Teste Rota DELETE /room/roomid EXCEPTION NEGATIVE")]
+    [InlineData("/room/-1")]
+
+    public async Task TestGDELETERoomIDEXCEPTIONEGATIVE(string url)
+    {
+        var response = await _clientTest.DeleteAsync(url);
+        Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
     }
 }

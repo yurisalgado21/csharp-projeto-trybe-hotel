@@ -27,6 +27,11 @@ namespace TrybeHotel.Controllers
         public IActionResult PostHotel([FromBody] Hotel hotel){
             try
             {
+                if (hotel.Name == "" || hotel.Name == null)
+                {
+                    return BadRequest("Hotel name is required");
+                }
+
                 var newHotel = _repository.AddHotel(hotel);
                 return Created("", newHotel);
             }
