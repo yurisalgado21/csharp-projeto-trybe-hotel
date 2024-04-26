@@ -27,7 +27,28 @@ namespace TrybeHotel.Repository
         // 5. Desenvolva o endpoint POST /hotel
         public HotelDto AddHotel(Hotel hotel)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _context.Hotels.Add(hotel);
+                _context.SaveChanges();
+                
+                var newHotel = _context.Hotels.First(h => h.HotelId == hotel.HotelId);
+
+                newHotel.City = _context.Cities.First(c => c.CityId == hotel.CityId);
+
+                return new HotelDto {
+                    hotelId = newHotel.HotelId,
+                    name = newHotel.Name,
+                    address = newHotel.Address,
+                    cityId = newHotel.CityId,
+                    cityName = newHotel.City!.Name
+                };
+            }
+            catch (Exception err)
+            {
+                
+                throw new Exception("An error occurred while saving the entity changes. See the inner exception for details.", err);
+            }
         }
     }
 }
